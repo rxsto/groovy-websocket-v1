@@ -15,6 +15,7 @@ public class Websocket extends WebSocketServer {
 
     private Configuration config = new Configuration("config/config.json").init();
     private Set<WebSocket> trusted = new HashSet<>();
+    private Set<WebSocket> connected = new HashSet<>();
 
     protected Websocket(InetSocketAddress address) {
         super(address);
@@ -27,6 +28,7 @@ public class Websocket extends WebSocketServer {
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         log.info(String.format("[Websocket] WebsocketConnection closed from %s!", webSocket.getRemoteSocketAddress()));
         trusted.remove(webSocket);
+        connected.remove(webSocket);
     }
 
     public void onMessage(WebSocket webSocket, String message) {
@@ -39,8 +41,10 @@ public class Websocket extends WebSocketServer {
         JSONObject data = object.getJSONObject("data");
 
         if (type.equals("authorization"))
-            if (data.get("token").equals(config.getJSONObject("websocket").getString("token")))
+            if (data.get("token").equals(config.getJSONObject("websocket").getString("token"))) {
                 trusted.add(webSocket);
+                connected.add(webSocket);
+            }
 
         if (!trusted.contains(webSocket))
             webSocket.close();
@@ -50,6 +54,11 @@ public class Websocket extends WebSocketServer {
 
         if (type.equals("poststats"))
             this.broadcast(object.toString());
+
+        if (type.equals("heartbeat")) {
+            connected.add(webSocket);
+            log.info("[Websocket] Received new Heartbeat! Currently connected: " + connected.size() + " Clients!");
+        }
     }
 
     public void onError(WebSocket webSocket, Exception e) {
