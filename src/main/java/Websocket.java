@@ -4,14 +4,17 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Log4j2
 public class Websocket extends WebSocketServer {
 
     private Configuration config = new Configuration("config/config.json").init();
+    private Set<WebSocket> trusted = new HashSet<>();
 
     protected Websocket(InetSocketAddress address) {
         super(address);
@@ -23,30 +26,37 @@ public class Websocket extends WebSocketServer {
 
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         log.info(String.format("[Websocket] WebsocketConnection closed from %s!", webSocket.getRemoteSocketAddress()));
+        trusted.remove(webSocket);
     }
 
     public void onMessage(WebSocket webSocket, String message) {
-        if (message.equals("getstats")) {
-            broadcast("botgetstats");
-            return;
-        }
+        JSONObject object = new JSONObject(message);
 
-        String token = message.split("-")[0];
-        if (!token.equals(config.getJSONObject("websocket").getString("token"))) {
+        if (!object.has("type") || !object.has("data"))
+            return;
+
+        String type = object.get("type").toString();
+        JSONObject data = object.getJSONObject("data");
+
+        if (type.equals("authorization"))
+            if (data.get("token").equals(config.getJSONObject("websocket").getString("token")))
+                trusted.add(webSocket);
+
+        if (!trusted.contains(webSocket))
             webSocket.close();
-            return;
-        }
 
-        message = message.split("-")[1];
+        if (type.equals("getstats"))
+            this.broadcast(parseMessage("botgetstats", new JSONObject().put("stats", "get")).toString());
 
-        if (message.startsWith("poststats")) {
-            String[] stats = message.split(":");
-            broadcast(String.format("stats:%s:%s:%s", stats[1], stats[2], stats[3]));
-        }
+        if (type.equals("poststats"))
+            this.broadcast(object.toString());
     }
 
     public void onError(WebSocket webSocket, Exception e) {
         log.error(String.format("[Websocket] Error on WebsocketConnection from %s!", webSocket.getRemoteSocketAddress()), e);
+        if (!webSocket.isClosed())
+            webSocket.close();
+        trusted.remove(webSocket);
     }
 
     public void onStart() {
@@ -63,5 +73,22 @@ public class Websocket extends WebSocketServer {
 
     private static void initLogger(String[] args) {
         Configurator.setRootLevel(args.length == 0 ? Level.INFO : Level.toLevel(args[0]));
+    }
+
+    public static JSONObject parseStats(int playing, int guilds, int users) {
+        JSONObject object = new JSONObject();
+        object.put("playing", playing);
+        object.put("guilds", guilds);
+        object.put("users", users);
+
+        return object;
+    }
+
+    public static JSONObject parseMessage(String type, JSONObject data) {
+        JSONObject object = new JSONObject();
+        object.put("type", type);
+        object.put("data", data);
+
+        return object;
     }
 }
