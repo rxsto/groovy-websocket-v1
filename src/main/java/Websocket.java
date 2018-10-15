@@ -1,4 +1,6 @@
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.java_websocket.WebSocket;
@@ -7,18 +9,26 @@ import org.java_websocket.server.WebSocketServer;
 import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
 @Log4j2
 public class Websocket extends WebSocketServer {
 
-    private Configuration config = new Configuration("config/config.json").init();
+    @Getter
+    private static Configuration config = new Configuration("config/config.json").init();
+    private Connection connection;
     private Set<WebSocket> trusted = new HashSet<>();
     private Set<WebSocket> connected = new HashSet<>();
 
     protected Websocket(InetSocketAddress address) {
         super(address);
+        PostgreSQL db = new PostgreSQL();
+        this.connection = db.getConnection();
     }
 
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
@@ -40,11 +50,38 @@ public class Websocket extends WebSocketServer {
         String type = object.get("type").toString();
         JSONObject data = object.getJSONObject("data");
 
-        if (type.equals("authorization"))
-            if (data.get("token").equals(config.getJSONObject("websocket").getString("token"))) {
+        if (type.equals("authorization")) {
+            PreparedStatement ps;
+            ResultSet rs;
+            String token = null;
+
+            try {
+                ps = connection.prepareStatement("SELECT * FROM websocket");
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    token = rs.getString("token");
+                }
+            } catch (SQLException e) {
+                log.error("[Websocket] Error while processing authentication!", e);
+            }
+
+            if (data.get("token").equals(token)) {
                 trusted.add(webSocket);
                 connected.add(webSocket);
+                try {
+                    connection.prepareStatement("DELETE FROM websocket").execute();
+                    PreparedStatement resetToken = connection.prepareStatement("INSERT INTO websocket (token) VALUES (?)");
+                    resetToken.setString(1, createToken());
+                    resetToken.execute();
+                } catch (SQLException e) {
+                    log.error("[Websocket] Error while processing authentication!", e);
+                }
+                log.info("[Websocket] Successfully authorized from " + webSocket.getRemoteSocketAddress() + "!");
+            } else {
+                webSocket.send(parseMessage("forbidden", new JSONObject().put("type", "The provided token was invalid!")).toString());
+                return;
             }
+        }
 
         if (!trusted.contains(webSocket))
             webSocket.close();
@@ -70,6 +107,16 @@ public class Websocket extends WebSocketServer {
 
     public void onStart() {
         log.info("[Websocket] Successfully started WebsocketServer!");
+
+        try {
+            this.connection.prepareStatement("DELETE FROM websocket");
+            PreparedStatement setToken = connection.prepareStatement("INSERT INTO websocket (token) VALUES (?)");
+            setToken.setString(1, createToken());
+            setToken.execute();
+            log.info("[Websocket] Generated Token!");
+        } catch (SQLException e) {
+            log.error("[Websocket] Error while generating first token!", e);
+        }
     }
 
     public static void main(String[] args) {
@@ -84,6 +131,7 @@ public class Websocket extends WebSocketServer {
         Configurator.setRootLevel(args.length == 0 ? Level.INFO : Level.toLevel(args[0]));
     }
 
+    @SuppressWarnings("unused")
     public static JSONObject parseStats(int playing, int guilds, int users) {
         JSONObject object = new JSONObject();
         object.put("playing", playing);
@@ -99,5 +147,9 @@ public class Websocket extends WebSocketServer {
         object.put("data", data);
 
         return object;
+    }
+
+    public static String createToken() {
+        return RandomStringUtils.randomAlphanumeric(64);
     }
 }
