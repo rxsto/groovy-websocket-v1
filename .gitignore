@@ -1,4 +1,4 @@
-# Created by .ignore support plugin (hsz.mobi)
+    # Created by .ignore support plugin (hsz.mobi)
 ### Maven template
 target/
 pom.xml.tag
@@ -76,3 +76,4 @@ fabric.properties
 /.idea/
 
 *.log
+/config.json
