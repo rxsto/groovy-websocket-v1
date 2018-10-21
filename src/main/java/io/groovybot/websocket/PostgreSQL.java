@@ -25,7 +25,7 @@ public class PostgreSQL implements Closeable {
     public PostgreSQL() {
         log.info("[Database] Connecting ...");
         defaults = new ArrayList<>();
-        JSONObject configuration = Websocket.getConfig().getJSONObject("db");
+        JSONObject configuration = Websocket.getWebsocket().getConfig().getJSONObject("db");
         HikariConfig hikariConfig = new HikariConfig();
         try {
             Class.forName("org.postgresql.Driver");

@@ -1,6 +1,7 @@
 package io.groovybot.websocket;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.Level;
@@ -22,28 +23,25 @@ import java.util.Set;
 public class Websocket extends WebSocketServer {
 
     @Getter
-    private static Configuration config = new Configuration("config/config.json").init();
+    private final Configuration config;
+    @Getter
+    private static Websocket websocket;
     private Connection connection;
     private WebSocket bot;
     private Set<WebSocket> trusted = new HashSet<>();
 
-    private Websocket(InetSocketAddress address) {
+    private Websocket(InetSocketAddress address, Configuration configuration) {
         super(address);
+        websocket = this;
+        this.config = configuration;
         PostgreSQL db = new PostgreSQL();
         this.connection = db.getConnection();
     }
 
-    public static void main(String[] args) {
-        initLogger(args);
-        log.info("[io.groovybot.websocket.Websocket] Starting ...");
-
-        WebSocketServer server = new Websocket(new InetSocketAddress("0.0.0.0", 6015));
-        server.run();
+    public Websocket(Configuration configuration) {
+        this(new InetSocketAddress(configuration.getJSONObject("websocket").getString("bind"), configuration.getJSONObject("websocket").getInt("port")), configuration);
     }
 
-    private static void initLogger(String[] args) {
-        Configurator.setRootLevel(args.length == 0 ? Level.INFO : Level.toLevel(args[0]));
-    }
 
     @SuppressWarnings("unused")
     public static JSONObject parseStats(int playing, int guilds, int users) {
