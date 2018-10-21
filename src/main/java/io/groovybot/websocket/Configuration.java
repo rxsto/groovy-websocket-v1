@@ -1,3 +1,5 @@
+package io.groovybot.websocket;
+
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,10 +31,10 @@ public class Configuration extends JSONObject {
             if (configFile.exists())
                 content = new BufferedReader(new FileReader(configFile)).lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
-            log.error("[Configuration] Error while loading config!", e);
+            log.error("[io.groovybot.websocket.Configuration] Error while loading config!", e);
         }
         if (content == null || content.equals("")) {
-            log.warn("[Configuration] The config does not exists, started loading defaults!");
+            log.warn("[io.groovybot.websocket.Configuration] The config does not exists, started loading defaults!");
             defaults.forEach(this::put);
         } else {
             JSONObject object = checkObject(new JSONObject(content));
@@ -52,7 +54,7 @@ public class Configuration extends JSONObject {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(configFile))) {
             bufferedWriter.write(toString(2));
         } catch (IOException e) {
-            log.error("[Configuration] Error while saving Configuration!", e);
+            log.error("[io.groovybot.websocket.Configuration] Error while saving io.groovybot.websocket.Configuration!", e);
         }
     }
 

@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
-    <appender name="console" class="org.apache.logging.log4j.core.appender.ConsoleAppender">
-        <layout class="org.apache.logging.log4j.core.layout.PatternLayout">
-            <param name="ConversionPattern" value=
-                    "[%d{HH:mm:ss}] [%c] [%p] | %m%n"/>
-        </layout>
-        <filter class="io.groovybot.bot.util.JDAFilter"/>
-    </appender>
-    <appender name="latestlog" class="org.apache.logging.log4j.core.appender.RollingFileAppender">
-        <param name="append" value="false"/>
-        <param name="file" value="logs/latest.log"/>
-        <layout class="org.apache.logging.log4j.core.layout.PatternLayout">
-            <param name="ConversionPattern" value=
-                    "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] [%c] [%p] | %m%n"/>
-        </layout>
-        <filter class="io.groovybot.bot.util.JDAFilter"/>
-    </appender>
-    <appender name="datelog" class="org.apache.logging.log4j.core.appender.RollingFileAppender">
-        <param name="append" value="false"/>
-        <param name="file" value="logs/%d{dd.MMM.yyyy HH:mm:ss,SSS}.log"/>
-        <layout class="org.apache.logging.log4j.core.layout.PatternLayout">
-            <param name="ConversionPattern" value=
-                    "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] [%c] [%p] | %m%n"/>
-        </layout>
-        <filter class="io.groovybot.bot.util.JDAFilter"/>
-    </appender>
+<Configuration packages="io.groovybot.websocket">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-5level] (%d{HH:mm:ss}) [%t] %logger{36} | %msg%n" />
+        </Console>
+        <File name="LatestLog" fileName="latest.log" append="false">
+            <PatternLayout pattern="[%-5level] (%d{HH:mm:ss}) [%t] %logger{36} | %msg%n" />
+        </File>
+        <RollingFile name="Log" fileName="websocket.log" filePattern="log/websocket-%d{MM-dd-yy}.log.gz">
+            <PatternLayout pattern="[%-5level] (%d{HH:mm:ss}) [%t] %logger{36} | %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <Async name="Async">
+            <AppenderRef ref="Log"/>
+            <AppenderRef ref="LatestLog"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Root>
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Async" />
+        </Root>
+    </Loggers>
 </Configuration>
