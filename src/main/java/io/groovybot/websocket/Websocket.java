@@ -37,7 +37,7 @@ public class Websocket extends WebSocketServer {
         initLogger(args);
         log.info("[io.groovybot.websocket.Websocket] Starting ...");
 
-        WebSocketServer server = new Websocket(new InetSocketAddress("127.0.0.1", 6015));
+        WebSocketServer server = new Websocket(new InetSocketAddress("0.0.0.0", 6015));
         server.run();
     }
 
