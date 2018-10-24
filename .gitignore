@@ -83,3 +83,4 @@ fabric.properties
 /fullchain.pkcs12
 /sfdcsec.ks.old
 /fullcert.pem
+/start.sh

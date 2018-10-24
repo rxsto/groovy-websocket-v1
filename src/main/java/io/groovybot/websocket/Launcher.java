@@ -38,7 +38,7 @@ public class Launcher implements Closeable {
         File configFile = new File("config/config.json");
         if (!configFile.exists())
             configFile.createNewFile();
-        Configuration configuration = new Configuration("config.json");
+        Configuration configuration = new Configuration("config/config.json");
         configuration.addDefault("websocket", new JSONObject()
                 .put("bind", "0.0.0.0")
                 .put("port", 6015));
