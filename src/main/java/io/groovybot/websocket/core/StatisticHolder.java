@@ -1,8 +1,10 @@
 package io.groovybot.websocket.core;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 public class StatisticHolder {
 
     private int playingCount = 0;
