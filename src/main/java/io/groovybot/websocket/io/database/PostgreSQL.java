@@ -1,8 +1,9 @@
-package io.groovybot.websocket;
+package io.groovybot.websocket.io.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import io.groovybot.websocket.core.Websocket;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
@@ -17,14 +18,11 @@ import java.util.List;
 @Log4j2
 public class PostgreSQL implements Closeable {
 
-    private final List<PostgreSQLDatabase> defaults;
     @Getter
-    private Connection connection;
     private HikariDataSource dataSource;
 
     public PostgreSQL() {
         log.info("[Database] Connecting ...");
-        defaults = new ArrayList<>();
         JSONObject configuration = Websocket.getWebsocket().getConfig().getJSONObject("db");
         HikariConfig hikariConfig = new HikariConfig();
         try {
@@ -43,37 +41,17 @@ public class PostgreSQL implements Closeable {
 
         try {
             dataSource = new HikariDataSource(hikariConfig);
-            connection = dataSource.getConnection();
-        } catch (SQLException | HikariPool.PoolInitializationException e) {
+        } catch (HikariPool.PoolInitializationException e) {
             log.error("[Database] Error while connecting to database!", e);
         }
 
-        if (connection != null)
+        if (dataSource != null)
             log.info("[Database] Connected!");
     }
 
-    public void createDatabases() {
-        defaults.forEach(postgreSQLDatabase -> {
-            try {
-                connection.prepareStatement(postgreSQLDatabase.getCreateStatement()).execute();
-            } catch (SQLException e) {
-                log.error("[Database] Error while creating databases!", e);
-            }
-        });
-    }
-
-    public void addDefault(PostgreSQLDatabase database) {
-        defaults.add(database);
-    }
-
     @Override
-    public void close() throws IOException {
+    public void close() {
         dataSource.close();
     }
 
-    public interface PostgreSQLDatabase {
-
-        String getCreateStatement();
-
-    }
 }
