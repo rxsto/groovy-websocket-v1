@@ -79,3 +79,7 @@ fabric.properties
 /config.json
 
 *.gz
+/sfdcsec.ks
+/fullchain.pkcs12
+/sfdcsec.ks.old
+/fullcert.pem

@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration packages="io.groovybot.websocket">
+    <Properties>
+        <property name="fileDate">${date:dd-MM-yyyy}</property>
+    </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] (%d{HH:mm:ss}) [%t] %logger{36} | %msg%n" />
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%-5level] [%t - %tid] %c{36} » %msg%n"/>
         </Console>
-        <File name="LatestLog" fileName="latest.log" append="false">
-            <PatternLayout pattern="[%-5level] (%d{HH:mm:ss}) [%t] %logger{36} | %msg%n" />
+        <File name="LatestLog" append="false">
+            <FileName>logs/latest.log</FileName>
+            <PatternLayout>
+                <pattern>[%d{HH:mm:ss}] [%-5level] [%t - %tid] %c{36} » %msg%n</pattern>
+            </PatternLayout>
         </File>
-        <RollingFile name="Log" fileName="websocket.log" filePattern="log/websocket-%d{MM-dd-yy}.log.gz">
-            <PatternLayout pattern="[%-5level] (%d{HH:mm:ss}) [%t] %logger{36} | %msg%n" />
-            <Policies>
-                <TimeBasedTriggeringPolicy/>
-            </Policies>
-        </RollingFile>
+        <File name="Log">
+            <FileName>logs/websocket-${fileDate}.log</FileName>
+            <PatternLayout>
+                <pattern>[%d{HH:mm:ss}] [%-5level] [%t - %tid] %c{36} » %msg%n</pattern>
+            </PatternLayout>
+        </File>
         <Async name="Async">
             <AppenderRef ref="Log"/>
             <AppenderRef ref="LatestLog"/>

@@ -35,7 +35,7 @@ public class Launcher implements Closeable {
         debug = String.join(" ", args).contains("debug");
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
         log.info("Starting ...");
-        File configFile = new File("config.json");
+        File configFile = new File("config/config.json");
         if (!configFile.exists())
             configFile.createNewFile();
         Configuration configuration = new Configuration("config.json");

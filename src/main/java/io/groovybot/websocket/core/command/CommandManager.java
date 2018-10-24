@@ -37,8 +37,7 @@ public class CommandManager implements Closeable {
     private void parseCommands(WebSocket webSocket, String message) {
         JSONObject parsedMessage = new JSONObject(message);
 
-        //Check message
-        if (!parsedMessage.has("type") || !parsedMessage.has("data"))
+        if (!parsedMessage.has("type") || !parsedMessage.has("data") || !parsedMessage.has("client"))
             return;
 
         String client = parsedMessage.getString("client");
@@ -50,15 +49,13 @@ public class CommandManager implements Closeable {
             data = new JSONObject();
         }
 
-        //Check if command exists
         if (!commandMap.containsKey(type))
             return;
 
         Command command = commandMap.get(type);
         CommandEvent commandEvent = new CommandEvent(webSocket, data, message, client.equals("bot"), instance, trustManager);
-        //Check permission
-        if (command.isNeedsAuthorization() && trustManager.isTrusted(webSocket)) {
-            webSocket.send(parseMessage("server", "error", new JSONObject().put("type", "forbidden").put("text", "This client is not authorized to send packets!!")).toString());
+        if (command.isNeedsAuthorization() && !trustManager.isTrusted(webSocket)) {
+            webSocket.send(parseMessage("server", "error", new JSONObject().put("type", "forbidden").put("text", "This client is not authorized to send packets!")).toString());
             webSocket.close();
             return;
         }

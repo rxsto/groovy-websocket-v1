@@ -1,10 +1,8 @@
 package io.groovybot.websocket.commands;
 
-import io.groovybot.websocket.core.StatisticHolder;
 import io.groovybot.websocket.core.command.Command;
 import io.groovybot.websocket.core.command.CommandEvent;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 
 import java.sql.Connection;
@@ -22,7 +20,7 @@ public class AuthorizationCommand extends Command {
     }
 
     @Override
-    protected void run(JSONObject message, CommandEvent event) {
+    protected void run(JSONObject data, CommandEvent event) {
         String token = null;
         try (Connection connection = event.getWebsocket().getDatabase().getDataSource().getConnection()) {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM websocket");
@@ -33,7 +31,7 @@ public class AuthorizationCommand extends Command {
             log.error("Error while processing authentication!", e);
         }
 
-        if (message.get("token").equals(token)) {
+        if (data.get("token").equals(token)) {
             event.getWebsocket().setBot(event.getInvoker());
             event.getTrustManager().trust(event.getInvoker());
             try (Connection connection = event.getWebsocket().getDatabase().getDataSource().getConnection()) {
@@ -49,5 +47,4 @@ public class AuthorizationCommand extends Command {
             event.getInvoker().send(parseMessage("error", new JSONObject().put("type", "forbidden").put("text", "The given token was invalid!")).toString());
         }
     }
-
 }
