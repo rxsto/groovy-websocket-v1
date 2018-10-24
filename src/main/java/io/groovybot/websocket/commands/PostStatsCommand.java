@@ -3,8 +3,10 @@ package io.groovybot.websocket.commands;
 import io.groovybot.websocket.core.StatisticHolder;
 import io.groovybot.websocket.core.command.Command;
 import io.groovybot.websocket.core.command.CommandEvent;
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 
+@Log4j2
 public class PostStatsCommand extends Command {
 
     public PostStatsCommand() {
@@ -17,6 +19,7 @@ public class PostStatsCommand extends Command {
         holder.setPlayingCount(message.getInt("playing"));
         holder.setServersCount(message.getInt("guilds"));
         holder.setUsersCount(message.getInt("users"));
+        log.info("Statistics got updated " + holder);
         event.getWebsocket().broadcast(event.getRawMessage());
     }
 }
