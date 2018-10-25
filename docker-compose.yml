@@ -1,0 +1,13 @@
+version: '3'
+services:
+  websocket:
+    build: .
+    networks:
+    - backend
+    volumes:
+    - "$PWD:/opt/groovy/websocket"
+    ports:
+    - "6015:6015"
+    command: java -jar websocket.jar
+networks:
+  backend:
