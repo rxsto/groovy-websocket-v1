@@ -26,10 +26,6 @@ public class Launcher implements Closeable {
 
     private final boolean debug;
 
-    public static void main(String[] args) throws IOException {
-        new Launcher(args);
-    }
-
     private Launcher(String[] args) throws IOException {
         initLogger(args);
         debug = String.join(" ", args).contains("debug");
@@ -76,6 +72,10 @@ public class Launcher implements Closeable {
             }
         }
         server.run();
+    }
+
+    public static void main(String[] args) throws IOException {
+        new Launcher(args);
     }
 
     private static void initLogger(String[] args) {

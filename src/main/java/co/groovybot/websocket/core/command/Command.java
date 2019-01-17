@@ -12,7 +12,8 @@ public abstract class Command {
 
     /**
      * Constructs a new command
-     * @param name the name of the command
+     *
+     * @param name               the name of the command
      * @param needsAuthorization whether the command needs an authorization or not
      */
     public Command(String name, boolean needsAuthorization) {

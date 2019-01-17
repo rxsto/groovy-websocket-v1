@@ -1,9 +1,9 @@
 package co.groovybot.websocket.io.database;
 
+import co.groovybot.websocket.core.Websocket;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
-import co.groovybot.websocket.core.Websocket;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;

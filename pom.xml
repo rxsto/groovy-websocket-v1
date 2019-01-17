@@ -12,12 +12,12 @@
         <developer>
             <name>Oskar Lang</name>
             <organization>Groovy</organization>
-            <organizationUrl>https://rxsto.me</organizationUrl>
+            <organizationUrl>https://groovybot.co</organizationUrl>
         </developer>
         <developer>
             <name>Michael Rittmeister</name>
             <organization>Groovy</organization>
-            <organizationUrl>https://schlaubi.me</organizationUrl>
+            <organizationUrl>https://groovybot.co</organizationUrl>
         </developer>
     </developers>
     <build>

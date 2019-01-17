@@ -1,10 +1,10 @@
 package co.groovybot.websocket.core;
 
+import co.groovybot.websocket.core.command.CommandManager;
+import co.groovybot.websocket.core.command.CommandRegistry;
 import co.groovybot.websocket.io.config.Configuration;
 import co.groovybot.websocket.io.database.PostgreSQL;
 import co.groovybot.websocket.util.Helpers;
-import co.groovybot.websocket.core.command.CommandManager;
-import co.groovybot.websocket.core.command.CommandRegistry;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -22,11 +22,9 @@ import java.sql.SQLException;
 public class Websocket extends WebSocketServer {
 
     @Getter
-    private final Configuration config;
-    @Getter
     private static Websocket websocket;
-    @Setter
-    private WebSocket bot;
+    @Getter
+    private final Configuration config;
     @Getter
     private final PostgreSQL database;
     @Getter
@@ -34,6 +32,8 @@ public class Websocket extends WebSocketServer {
     private final CommandManager commandManager;
     @Getter
     private final StatisticHolder statisticHolder;
+    @Setter
+    private WebSocket bot;
 
     private Websocket(InetSocketAddress address, Configuration configuration) {
         super(address);

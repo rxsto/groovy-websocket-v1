@@ -1,8 +1,8 @@
 package co.groovybot.websocket.commands;
 
-import co.groovybot.websocket.util.Helpers;
 import co.groovybot.websocket.core.command.Command;
 import co.groovybot.websocket.core.command.CommandEvent;
+import co.groovybot.websocket.util.Helpers;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 
