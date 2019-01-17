@@ -1,0 +1,20 @@
+image: theleede/dlo-runner:groovy
+
+cache:
+  paths:
+    - .m2/
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2"
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS clean package
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 week
