@@ -1,9 +1,10 @@
-package io.groovybot.websocket.core;
+package co.groovybot.websocket.core;
 
-import io.groovybot.websocket.core.command.CommandManager;
-import io.groovybot.websocket.core.command.CommandRegistry;
-import io.groovybot.websocket.io.config.Configuration;
-import io.groovybot.websocket.io.database.PostgreSQL;
+import co.groovybot.websocket.io.config.Configuration;
+import co.groovybot.websocket.io.database.PostgreSQL;
+import co.groovybot.websocket.util.Helpers;
+import co.groovybot.websocket.core.command.CommandManager;
+import co.groovybot.websocket.core.command.CommandRegistry;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -16,9 +17,6 @@ import java.net.InetSocketAddress;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
-import static io.groovybot.websocket.util.Helpers.createToken;
-import static io.groovybot.websocket.util.Helpers.parseMessage;
 
 @Log4j2
 public class Websocket extends WebSocketServer {
@@ -74,7 +72,7 @@ public class Websocket extends WebSocketServer {
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
         log.info(String.format("WebsocketConnection closed from %s!", webSocket.getRemoteSocketAddress()));
         if (webSocket.equals(bot))
-            this.broadcast(parseMessage("server", "error", new JSONObject().put("text", "Client bot disconnected!")).toString());
+            this.broadcast(Helpers.parseMessage("server", "error", new JSONObject().put("text", "Client bot disconnected!")).toString());
         trustManager.unTrust(webSocket);
     }
 
@@ -85,7 +83,7 @@ public class Websocket extends WebSocketServer {
     public void onError(WebSocket webSocket, Exception e) {
         log.error(String.format(" Error on WebsocketConnection from %s!", webSocket.getRemoteSocketAddress()), e);
         if (webSocket.equals(bot))
-            this.broadcast(parseMessage("server", "error", new JSONObject().put("text", "Client bot disconnected!")).toString());
+            this.broadcast(Helpers.parseMessage("server", "error", new JSONObject().put("text", "Client bot disconnected!")).toString());
         if (!webSocket.isClosed())
             webSocket.close();
         trustManager.unTrust(webSocket);
@@ -97,7 +95,7 @@ public class Websocket extends WebSocketServer {
         try (Connection connection = database.getDataSource().getConnection()) {
             connection.prepareStatement("DELETE FROM websocket");
             PreparedStatement setToken = connection.prepareStatement("INSERT INTO websocket (token) VALUES (?)");
-            setToken.setString(1, createToken());
+            setToken.setString(1, Helpers.createToken());
             setToken.execute();
             log.info(" Generated Token!");
         } catch (SQLException e) {

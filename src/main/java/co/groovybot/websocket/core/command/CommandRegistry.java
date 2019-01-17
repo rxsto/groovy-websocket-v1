@@ -1,9 +1,9 @@
-package io.groovybot.websocket.core.command;
+package co.groovybot.websocket.core.command;
 
-import io.groovybot.websocket.commands.AuthorizationCommand;
-import io.groovybot.websocket.commands.GetStatsCommand;
-import io.groovybot.websocket.commands.HeartBeatCommand;
-import io.groovybot.websocket.commands.PostStatsCommand;
+import co.groovybot.websocket.commands.AuthorizationCommand;
+import co.groovybot.websocket.commands.GetStatsCommand;
+import co.groovybot.websocket.commands.HeartBeatCommand;
+import co.groovybot.websocket.commands.PostStatsCommand;
 
 public class CommandRegistry {
 

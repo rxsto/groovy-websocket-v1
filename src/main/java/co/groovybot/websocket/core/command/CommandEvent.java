@@ -1,7 +1,7 @@
-package io.groovybot.websocket.core.command;
+package co.groovybot.websocket.core.command;
 
-import io.groovybot.websocket.core.TrustManager;
-import io.groovybot.websocket.core.Websocket;
+import co.groovybot.websocket.core.TrustManager;
+import co.groovybot.websocket.core.Websocket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.java_websocket.WebSocket;

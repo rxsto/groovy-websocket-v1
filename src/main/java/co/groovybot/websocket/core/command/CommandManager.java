@@ -1,7 +1,8 @@
-package io.groovybot.websocket.core.command;
+package co.groovybot.websocket.core.command;
 
-import io.groovybot.websocket.core.TrustManager;
-import io.groovybot.websocket.core.Websocket;
+import co.groovybot.websocket.core.TrustManager;
+import co.groovybot.websocket.core.Websocket;
+import co.groovybot.websocket.util.Helpers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.java_websocket.WebSocket;
@@ -13,8 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static io.groovybot.websocket.util.Helpers.parseMessage;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -55,7 +54,7 @@ public class CommandManager implements Closeable {
         Command command = commandMap.get(type);
         CommandEvent commandEvent = new CommandEvent(webSocket, data, message, client.equals("bot"), instance, trustManager);
         if (command.isNeedsAuthorization() && !trustManager.isTrusted(webSocket)) {
-            webSocket.send(parseMessage("server", "error", new JSONObject().put("type", "forbidden").put("text", "This client is not authorized to send packets!")).toString());
+            webSocket.send(Helpers.parseMessage("server", "error", new JSONObject().put("type", "forbidden").put("text", "This client is not authorized to send packets!")).toString());
             webSocket.close();
             return;
         }

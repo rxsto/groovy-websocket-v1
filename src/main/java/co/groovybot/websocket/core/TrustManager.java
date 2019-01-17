@@ -1,4 +1,4 @@
-package io.groovybot.websocket.core;
+package co.groovybot.websocket.core;
 
 
 import org.java_websocket.WebSocket;

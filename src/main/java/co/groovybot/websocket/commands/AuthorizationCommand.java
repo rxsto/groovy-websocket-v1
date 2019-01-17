@@ -1,7 +1,8 @@
-package io.groovybot.websocket.commands;
+package co.groovybot.websocket.commands;
 
-import io.groovybot.websocket.core.command.Command;
-import io.groovybot.websocket.core.command.CommandEvent;
+import co.groovybot.websocket.util.Helpers;
+import co.groovybot.websocket.core.command.Command;
+import co.groovybot.websocket.core.command.CommandEvent;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 
@@ -9,8 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static io.groovybot.websocket.util.Helpers.createToken;
 
 @Log4j2
 public class AuthorizationCommand extends Command {
@@ -37,7 +36,7 @@ public class AuthorizationCommand extends Command {
             try (Connection connection = event.getWebsocket().getDatabase().getDataSource().getConnection()) {
                 connection.prepareStatement("DELETE FROM websocket").execute();
                 PreparedStatement resetToken = connection.prepareStatement("INSERT INTO websocket (token) VALUES (?)");
-                resetToken.setString(1, createToken());
+                resetToken.setString(1, Helpers.createToken());
                 resetToken.execute();
             } catch (SQLException e) {
                 log.error("Error while processing authentication!", e);

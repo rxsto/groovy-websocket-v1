@@ -1,6 +1,6 @@
-package io.groovybot.websocket.core.command;
+package co.groovybot.websocket.core.command;
 
-import io.groovybot.websocket.util.Helpers;
+import co.groovybot.websocket.util.Helpers;
 import lombok.Getter;
 import org.json.JSONObject;
 

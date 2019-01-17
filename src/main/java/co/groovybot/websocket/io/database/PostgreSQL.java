@@ -1,19 +1,14 @@
-package io.groovybot.websocket.io.database;
+package co.groovybot.websocket.io.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
-import io.groovybot.websocket.core.Websocket;
+import co.groovybot.websocket.core.Websocket;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Log4j2
 public class PostgreSQL implements Closeable {
