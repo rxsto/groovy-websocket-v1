@@ -45,6 +45,7 @@ public class Websocket extends WebSocketServer {
         //Register commands
         new CommandRegistry(commandManager);
         this.statisticHolder = new StatisticHolder();
+        log.info(String.format("[Websocket] Initializing Websocket with address %s ...", address.toString()));
     }
 
     private Websocket(String bind, int port, Configuration configuration) {
