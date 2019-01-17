@@ -1,7 +1,7 @@
-package io.groovybot.websocket;
+package co.groovybot.websocket;
 
-import io.groovybot.websocket.core.Websocket;
-import io.groovybot.websocket.io.config.Configuration;
+import co.groovybot.websocket.core.Websocket;
+import co.groovybot.websocket.io.config.Configuration;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.ConfigurationSource;

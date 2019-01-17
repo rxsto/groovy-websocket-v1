@@ -29,7 +29,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>io.groovybot.websocket.Launcher</mainClass>
+                            <mainClass>co.groovybot.websocket.Launcher</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,4 +1,4 @@
-package io.groovybot.websocket.util;
+package co.groovybot.websocket.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
