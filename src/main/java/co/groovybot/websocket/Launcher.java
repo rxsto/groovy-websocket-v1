@@ -28,31 +28,43 @@ public class Launcher implements Closeable {
 
     private Launcher(String[] args) throws IOException {
         initLogger(args);
+
         debug = String.join(" ", args).contains("debug");
+
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+
         log.info("Starting ...");
+
         File configFile = new File("config/config.json");
+
         if (!configFile.exists())
             configFile.createNewFile();
+
         Configuration configuration = new Configuration("config/config.json");
+
         configuration.addDefault("websocket", new JSONObject()
                 .put("bind", "0.0.0.0")
-                .put("port", 6015));
+                .put("port", 1337));
+
         configuration.addDefault("db", new JSONObject()
                 .put("host", "host")
-                .put("port", 1234)
+                .put("port", 1337)
                 .put("username", "user")
                 .put("database", "database")
                 .put("password", "password")
         );
+
         configuration.addDefault("ssl", new JSONObject()
                 .put("storetype", "JKS")
                 .put("keystore", "keystore.jks")
                 .put("password", "keysotrepw")
                 .put("keypassword", "keypw")
         );
+
         configuration = configuration.init();
+
         JSONObject sslConfig = configuration.getJSONObject("ssl");
+
         WebSocketServer server = new Websocket(configuration);
 
         if (!debug) {
@@ -71,6 +83,7 @@ public class Launcher implements Closeable {
                 log.fatal("[Launcher] Error while preparing SSL Socket", e);
             }
         }
+
         server.run();
     }
 
