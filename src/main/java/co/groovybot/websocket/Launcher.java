@@ -72,12 +72,18 @@ public class Launcher implements Closeable {
                 KeyStore ks = KeyStore.getInstance(sslConfig.getString("storetype"));
                 File keyFile = new File(sslConfig.getString("keystore"));
                 ks.load(new FileInputStream(keyFile), sslConfig.getString("password").toCharArray());
+
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
                 keyManagerFactory.init(ks, sslConfig.getString("keypassword").toCharArray());
+
                 TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
                 trustManagerFactory.init(ks);
+
                 SSLContext sslContext = SSLContext.getInstance("TLS");
                 sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+                log.info("Preparing SSL-Certificate for {}!", ks.aliases().nextElement());
+
                 server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
             } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
                 log.fatal("[Launcher] Error while preparing SSL Socket", e);

@@ -16,6 +16,4 @@ public class Helpers {
     public static String createToken() {
         return RandomStringUtils.randomAlphanumeric(64);
     }
-
-
 }
