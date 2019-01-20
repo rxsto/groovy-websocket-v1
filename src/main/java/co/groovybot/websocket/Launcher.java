@@ -63,34 +63,36 @@ public class Launcher implements Closeable {
 
         configuration = configuration.init();
 
-        JSONObject sslConfig = configuration.getJSONObject("ssl");
+//        JSONObject sslConfig = configuration.getJSONObject("ssl");
 
         WebSocketServer server = new Websocket(configuration);
 
-        if (!debug) {
-            try {
-                KeyStore ks = KeyStore.getInstance(sslConfig.getString("storetype"));
-                File keyFile = new File(sslConfig.getString("keystore"));
-                ks.load(new FileInputStream(keyFile), sslConfig.getString("password").toCharArray());
+        server.start();
 
-                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-                keyManagerFactory.init(ks, sslConfig.getString("keypassword").toCharArray());
+//        if (!debug) {
+//            try {
+//                KeyStore ks = KeyStore.getInstance(sslConfig.getString("storetype"));
+//                File keyFile = new File(sslConfig.getString("keystore"));
+//                ks.load(new FileInputStream(keyFile), sslConfig.getString("password").toCharArray());
+//
+//                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
+//                keyManagerFactory.init(ks, sslConfig.getString("keypassword").toCharArray());
+//
+//                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
+//                trustManagerFactory.init(ks);
+//
+//                SSLContext sslContext = SSLContext.getInstance("TLS");
+//                sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+//
+//                log.info("Preparing SSL-Certificate for {}!", ks.aliases().nextElement());
+//
+//                server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
+//            } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
+//                log.fatal("[Launcher] Error while preparing SSL Socket", e);
+//            }
+//        }
 
-                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
-                trustManagerFactory.init(ks);
-
-                SSLContext sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
-
-                log.info("Preparing SSL-Certificate for {}!", ks.aliases().nextElement());
-
-                server.setWebSocketFactory(new DefaultSSLWebSocketServerFactory(sslContext));
-            } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
-                log.fatal("[Launcher] Error while preparing SSL Socket", e);
-            }
-        }
-
-        server.run();
+//        server.run();
     }
 
     public static void main(String[] args) throws IOException {

@@ -56,7 +56,6 @@ public class Websocket extends WebSocketServer {
         this(configuration.getJSONObject("websocket").getString("bind"), configuration.getJSONObject("websocket").getInt("port"), configuration);
     }
 
-
     @SuppressWarnings("unused")
     private JSONObject parseStats(int playing, int guilds, int users) {
         JSONObject object = new JSONObject();
